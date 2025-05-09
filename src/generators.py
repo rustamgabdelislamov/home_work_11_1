@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Generator, List, Dict, Any
 
 
 def filter_by_currency(transactions_list: list[dict], currency: str) -> Generator[dict, None]:
