@@ -32,6 +32,3 @@ def card_number_generator(start, end):
         for number in range(start, end + 1):
             generated_number = f"{"0" * (16 - len(str(number)))}{number}"
             yield f"{generated_number[:4]} {generated_number[4:8]} {generated_number[8:12]} {generated_number[-4:]}"
-
-
-

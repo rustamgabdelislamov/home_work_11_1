@@ -6,7 +6,7 @@ from src.generators import filter_by_currency, transaction_descriptions, card_nu
 def test_filter_by_currency(
         transactions, transaction_usd_1, transaction_usd_2, transaction_usd_3, transaction_rub_1, transaction_rub_2
 ):
-    #Проверка на валюту "USD"
+    # Проверка на валюту "USD"
     test_currency_usd = filter_by_currency(transactions, "USD")
     assert next(test_currency_usd) == transaction_usd_1
     assert next(test_currency_usd) == transaction_usd_2
@@ -27,7 +27,7 @@ def test_filter_by_currency(
 
     # Проверка на отсутсвие списка транзакции
     with pytest.raises(ValueError):
-        next(filter_by_currency([],"RUB"))
+        next(filter_by_currency([], "RUB"))
 
 
 def test_transaction_descriptions(transactions):
@@ -43,9 +43,10 @@ def test_transaction_descriptions(transactions):
     with pytest.raises(ValueError):
         next(transaction_descriptions([]))
 
+
 def test_card_number_generator():
     # Тестирование при корректных входных данных
-    test_number_generator_1 = card_number_generator(1,4)
+    test_number_generator_1 = card_number_generator(1, 4)
     assert next(test_number_generator_1) == "0000 0000 0000 0001"
     assert next(test_number_generator_1) == "0000 0000 0000 0002"
     assert next(test_number_generator_1) == "0000 0000 0000 0003"
@@ -75,7 +76,3 @@ def test_card_number_generator():
     # Значения диапазонов не переданы
     with pytest.raises(ValueError):
         next(card_number_generator("", ""))
-
-
-
-
