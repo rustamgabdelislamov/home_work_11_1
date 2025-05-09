@@ -12,6 +12,7 @@ def len_figure():
 
 @pytest.fixture
 def transactions():
+    print("Фикстура transactions вызывается")
     return [
         {
             "id": 939719570,

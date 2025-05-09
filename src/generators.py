@@ -1,7 +1,4 @@
-from typing import Generator, List, Dict, Any
-
-
-def filter_by_currency(transactions_list: list[dict], currency: str) -> Generator[dict, None]:
+def filter_by_currency(transactions_list, currency):
     """
     Функция поочередно выдает транзакции, где валюта операции соответствует заданной
     """
