@@ -1,54 +1,22 @@
-from generators.generators import filter_by_currency
+def filter_by_currency(transactions, currency_code):
+    if not isinstance(transactions, list):
+        return 'Вы ввели не список'
+    if not transactions or not currency_code:
+        return []
 
-transactions = [{
-          "id": 939719570,
-          "operationAmount": {
-              "amount": "9824.07",
-              "currency": {
-                  "name": "RUB",
-                  "code": "RUB"
-              }
-          },
-          "description": "Перевод организации",
-      },
-      {
-              "id": 142264268,
-              "state": "EXECUTED",
-              "date": "2019-04-04T23:20:05.206878",
-              "operationAmount": {
-                  "amount": "79114.93",
-                  "currency": {
-                      "name": "USD",
-                      "code": "USD"
-                  }
-              },
-              "description": "Перевод со счета на счет",
-       },
-    {
-        "id": 939719570,
-        "operationAmount": {
-            "amount": "9824.07",
-            "currency": {
-                "name": "USD",
-                "code": "USD"
-            }
-        },
-        "description": "Перевод организации",
-    },
-    {
-        "id": 142264268,
-        "state": "EXECUTED",
-        "date": "2019-04-04T23:20:05.206878",
-        "operationAmount": {
-            "amount": "79114.93",
-            "currency": {
-                "name": "RUB",
-                "code": "RUB"
-            }
-        },
-        "description": "Перевод со счета на счет",
-    }
+    def check_currency(transaction):
+        if not isinstance(transaction, dict):
+            return False
+        code = transaction.get('operationAmount', {}).get('currency', {}).get('code')
+        return code == currency_code
 
+    return filter(check_currency, transactions)
+
+
+transactions = [
+    {'id': 1, 'operationAmount': {'amount': '100.00', 'currency': {'code': 'USD'}}},
+    {'id': 2, 'operationAmount': {'amount': '200.00', 'currency': {'code': 'EUR'}}},
+    {'id': 3, 'operationAmount': {'amount': '150.00', 'currency': {'code': 'USD'}}}
 ]
 
 usd_transactions = filter_by_currency(transactions, "USD")
