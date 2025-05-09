@@ -1,4 +1,4 @@
-# Home_works_10_2
+# Home_works_11.1
 # Этот проект предназначен для сортировки списка словарей по ключевому слову 'state' и дате по убыванию.
 ## Установка
 1. Клонируйте репозиторий ```git@github.com:rustamgabdelislamov/home_works_10_1.git```
@@ -26,7 +26,33 @@
         return sorted_list
 Принимает аргумент filter_by_state_из предыдущей функции и сортирует список по аргументу date по умолчанию
 
-### Пример работы функции
+3. Функция filter_by_currency
+    ```def filter_by_currency(transactions_list, currency):
+    """
+    Функция поочередно выдает транзакции, где валюта операции соответствует заданной
+    """
+
+    if not currency:
+        raise ValueError("Не указана валюта")
+    elif not transactions_list:
+        raise ValueError("Не указан список транзакций")
+    else:
+        for transaction in transactions_list:
+            if transaction["operationAmount"]["currency"]["code"] == currency:
+                yield transaction
+Принимает список словарей и сортирует их по валюте 
+
+4. Функция transaction_descriptions
+    ```def transaction_descriptions(transactions_list):
+    """Функция принимает список транзакций и возвращает описание операций"""
+    if not transactions_list:
+        raise ValueError("Не указан список транзакций")
+    for transaction in transactions_list:
+        yield transaction["description"]
+
+
+
+### Пример работы функции filter_by_state
 на входе ```[{'id': 41428829, 'state': 'EXECUTED', 'date': '2019-07-03T18:35:29.512364'},
         {'id': 939719570, 'state': 'EXECUTED', 'date': '2018-06-30T02:08:58.425572'},
         {'id': 594226727, 'state': 'CANCELED', 'date': '2018-05-29T21:27:25.241689'},
