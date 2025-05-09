@@ -13,13 +13,25 @@ def filter_by_currency(transactions_list, currency):
                 yield transaction
 
 
-def transaction_descriptions(transactions):
-    for transaction in transactions:
-        yield transaction.get("description", "")
+def transaction_descriptions(transactions_list):
+    """Функция принимает список транзакций и возвращает описание операций"""
+    if not transactions_list:
+        raise ValueError("Не указан список транзакций")
+    for transaction in transactions_list:
+        yield transaction["description"]
 
 
 def card_number_generator(start, end):
-    for number in range(start, end):
-        yield f"{number // 1000000000000000:04} {number // 100000000000 % 10000:04} " \
-              f"{number // 10000 % 10000:04} {number % 10000:04}"
+    if not start or start > 9999999999999999:
+        raise ValueError("Числа должны быть в диапазоне от 1 до 9999999999999999")
+    elif not end or end > 9999999999999999:
+        raise ValueError("Числа должны быть в диапазоне от 1 до 9999999999999999")
+    elif end < start:
+        raise ValueError("Второе число не должно быть меньше первого")
+    else:
+        for number in range(start, end + 1):
+            generated_number = f"{"0" * (16 - len(str(number)))}{number}"
+            yield f"{generated_number[:4]} {generated_number[4:8]} {generated_number[8:12]} {generated_number[-4:]}"
+
+
 
