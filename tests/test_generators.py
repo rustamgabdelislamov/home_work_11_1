@@ -1,52 +1,78 @@
 import pytest
 
+from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
 
-from generators.generators import filter_by_currency
 
-@pytest.mark.parametrize("transactions, currency_code, expected", [
-    (
-        [
-            {
-                "id": 939719570,
-                "operationAmount": {
-                    "amount": "9824.07",
-                    "currency": {
-                        "name": "RUB",
-                        "code": "USD"
-                    }
-                },
-                "description": "Перевод организации",
-            },
-            {
-                "id": 142264268,
-                "state": "EXECUTED",
-                "date": "2019-04-04T23:20:05.206878",
-                "operationAmount": {
-                    "amount": "79114.93",
-                    "currency": {
-                        "name": "USD",
-                        "code": "USD"
-                    }
-                },
-                "description": "Перевод со счета на счет",
-            }
-        ],
-        "USD",
-        {
-            "id": 142264268,
-            "state": "EXECUTED",
-            "date": "2019-04-04T23:20:05.206878",
-            "operationAmount": {
-                "amount": "79114.93",
-                "currency": {
-                    "name": "USD",
-                    "code": "USD"
-                }
-            },
-            "description": "Перевод со счета на счет",
-        }
-    )
-])
-def test_filter_by_currency(transactions, currency_code, expected):
-    result = filter_by_currency(transactions, currency_code)
-    assert result == expected
+def test_filter_by_currency(
+        transactions, transaction_usd_1, transaction_usd_2, transaction_usd_3, transaction_rub_1, transaction_rub_2
+):
+    # Проверка на валюту "USD"
+    test_currency_usd = filter_by_currency(transactions, "USD")
+    assert next(test_currency_usd) == transaction_usd_1
+    assert next(test_currency_usd) == transaction_usd_2
+    assert next(test_currency_usd) == transaction_usd_3
+
+    # Проверка на валюту "RUB"
+    test_currency_rub = filter_by_currency(transactions, "RUB")
+    assert next(test_currency_rub) == transaction_rub_1
+    assert next(test_currency_rub) == transaction_rub_2
+
+    # Проверка на пустое значение валюты
+    with pytest.raises(ValueError):
+        next(filter_by_currency(transactions, ""))
+
+    # Проверка на отсутствие валюты в списке итеррации
+    with pytest.raises(StopIteration):
+        next(filter_by_currency(transactions, "EUR"))
+
+    # Проверка на отсутсвие списка транзакции
+    with pytest.raises(ValueError):
+        next(filter_by_currency([], "RUB"))
+
+
+def test_transaction_descriptions(transactions):
+    # Тестирование при корректных входных данных
+    test_descriptions = transaction_descriptions(transactions)
+    assert next(test_descriptions) == "Перевод организации"
+    assert next(test_descriptions) == "Перевод со счета на счет"
+    assert next(test_descriptions) == "Перевод со счета на счет"
+    assert next(test_descriptions) == "Перевод с карты на карту"
+    assert next(test_descriptions) == "Перевод организации"
+
+    # Проверка на отсутствие списка транзакций
+    with pytest.raises(ValueError):
+        next(transaction_descriptions([]))
+
+
+def test_card_number_generator():
+    # Тестирование при корректных входных данных
+    test_number_generator_1 = card_number_generator(1, 4)
+    assert next(test_number_generator_1) == "0000 0000 0000 0001"
+    assert next(test_number_generator_1) == "0000 0000 0000 0002"
+    assert next(test_number_generator_1) == "0000 0000 0000 0003"
+    assert next(test_number_generator_1) == "0000 0000 0000 0004"
+
+    # Нижняя граница диапазона
+    test_generator_3 = card_number_generator(1, 2)
+    assert next(test_generator_3) == "0000 0000 0000 0001"
+    assert next(test_generator_3) == "0000 0000 0000 0002"
+
+    # Верхняя граница диапазона
+    test_generator_4 = card_number_generator(9999999999999998, 9999999999999999)
+    assert next(test_generator_4) == "9999 9999 9999 9998"
+    assert next(test_generator_4) == "9999 9999 9999 9999"
+
+    # Атрибуты за границами диапазонов
+    with pytest.raises(ValueError):
+        next(card_number_generator(0, 2))
+
+    with pytest.raises(ValueError):
+        next(card_number_generator(9999999999999999, 10000000000000000))
+
+    # Стартовое число больше финишного
+    with pytest.raises(ValueError):
+        next(card_number_generator(7, 6))
+
+    # Значения диапазонов не переданы
+    with pytest.raises(ValueError):
+        next(card_number_generator("", ""))
