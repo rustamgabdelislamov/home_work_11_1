@@ -1,4 +1,7 @@
-def filter_by_currency(transactions_list, currency):
+from typing import Generator
+
+
+def filter_by_currency(transactions_list: list[dict], currency: str) -> Generator[dict, None]:
     """
     Функция поочередно выдает транзакции, где валюта операции соответствует заданной
     """
@@ -13,7 +16,7 @@ def filter_by_currency(transactions_list, currency):
                 yield transaction
 
 
-def transaction_descriptions(transactions_list):
+def transaction_descriptions(transactions_list: list[dict]) -> Generator[dict, None]:
     """Функция принимает список транзакций и возвращает описание операций"""
     if not transactions_list:
         raise ValueError("Не указан список транзакций")
@@ -21,7 +24,7 @@ def transaction_descriptions(transactions_list):
         yield transaction["description"]
 
 
-def card_number_generator(start, end):
+def card_number_generator(start: int, end: int) -> Generator[str, None]:
     if not start or start > 9999999999999999:
         raise ValueError("Числа должны быть в диапазоне от 1 до 9999999999999999")
     elif not end or end > 9999999999999999:
